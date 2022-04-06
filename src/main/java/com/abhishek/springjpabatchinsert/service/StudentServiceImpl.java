@@ -6,6 +6,7 @@ import com.abhishek.springjpabatchinsert.repository.StudentRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,14 @@ public class StudentServiceImpl {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public void addMany(List<Student> students) {
+        List<StudentEntity> studentEntities = students.stream().map(student -> {
+            StudentEntity studentEntity = new StudentEntity();
+            BeanUtils.copyProperties(student, studentEntity);
+            return studentEntity;
+        }).collect(Collectors.toList());
+
+        studentRepository.saveAll(studentEntities);
     }
 }
